@@ -16,7 +16,7 @@ class RegisterViewModel(app: Application) : AndroidViewModel(app) {
     private val _uiState = MutableStateFlow(RegisterUiState())
     val uiState: StateFlow<RegisterUiState> = _uiState
 
-    fun register(name: String, email: String, password: String, accountType: String) {
+    fun register(name: String, email: String, password: String, accountType: String, isAdmin: Boolean) {
         viewModelScope.launch {
             // tiny validation
             if (name.isBlank() || email.isBlank() || password.isBlank()) {
@@ -37,7 +37,8 @@ class RegisterViewModel(app: Application) : AndroidViewModel(app) {
                         name = name.trim(),
                         email = email.trim(),
                         password = password,
-                        accountType = accountType
+                        accountType = accountType,
+                        isAdmin = isAdmin // Default is false, manually set to true for testing
                     )
                 )
                 _uiState.value = RegisterUiState(success = true, userId = newId)

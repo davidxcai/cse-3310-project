@@ -39,6 +39,7 @@ fun RegisterScreen(
     var password by remember { mutableStateOf("")}
     var name by remember { mutableStateOf("")}
     var accountType by remember {mutableStateOf("BUYER")} // default
+    var isAdmin by remember { mutableStateOf(false) }
 
     // when registration successful, navigate
     LaunchedEffect(state.success) {
@@ -88,7 +89,7 @@ fun RegisterScreen(
 
             Button(
                 onClick = {
-                    vm.register(name, email, password, accountType)
+                    vm.register(name, email, password, accountType, isAdmin)
                 },
                 modifier = Modifier.fillMaxWidth()
 

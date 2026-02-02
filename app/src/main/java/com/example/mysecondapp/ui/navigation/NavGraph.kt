@@ -1,5 +1,9 @@
 package com.example.mysecondapp.ui.navigation
 
+// This is how the entire app controls its navigation
+// each "route" will show its own screen
+
+
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -16,8 +20,9 @@ fun AppNavGraph(
     navController: NavHostController,
     query: String
 ) {
-
     NavHost(
+        // This is the "root" screen
+        // app will always start on this screen
         navController = navController,
         startDestination = "login",
         // Modifier provides the padding so screens don't "slip" under Navigation components
@@ -46,6 +51,7 @@ fun AppNavGraph(
             )
         }
         composable("home/{userId}") { backStackEntry ->
+            // This gets the user Id passed in from the database
             val userId = backStackEntry.arguments?.getString("userId")!!.toLong()
             // shows all listings sorted by new
 
@@ -62,8 +68,8 @@ fun AppNavGraph(
             val listingId = backStackEntry.arguments?.getString("listingId")!!
             ListingDetailScreen(listingId, navController)
         }
-        composable("listings") {
-            // shows all listings
+        composable("myListings") {
+            // shows all listings by user
             // can search and filter
         }
         composable("upload") {

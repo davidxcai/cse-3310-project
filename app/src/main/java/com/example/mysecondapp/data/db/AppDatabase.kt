@@ -10,7 +10,7 @@ import com.example.mysecondapp.data.db.entity.UserEntity
 @Database(
     // These are the tables we have, can add more inside the array
     entities = [UserEntity::class],
-    version = 1,
+    version = 3,
     exportSchema = false
 )
 // required for room to generate code behind the scenes
@@ -25,14 +25,15 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun getInstance(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    AppDatabase::class.java,
-                    "app_database"
-                ).build()
-                INSTANCE = instance
-                instance
-            }
+            INSTANCE ?: Room.databaseBuilder(
+                context.applicationContext,
+                AppDatabase::class.java,
+                "app_database"
+            )
+                .fallbackToDestructiveMigration()
+                .build()
+                .also { INSTANCE = it }
+        }
         }
     }
 
