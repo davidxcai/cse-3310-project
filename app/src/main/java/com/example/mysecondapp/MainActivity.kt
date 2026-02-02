@@ -54,7 +54,16 @@ class MainActivity : ComponentActivity() {
                     },
                     bottomBar = {
                         if (currentRoute !in hideNavScreens) {
-                            BottomBar(navController)
+                            BottomBar(
+                                navController,
+                                onLogout = {
+                                    navController.navigate("login") {
+                                        popUpTo(0) { inclusive = true }
+                                        launchSingleTop = true
+                                    }
+
+                                }
+                            )
                         }
                     }
                 ) { innerPadding ->

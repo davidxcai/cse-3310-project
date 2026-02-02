@@ -16,7 +16,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
-fun BottomBar(navController: NavController) {
+fun BottomBar(
+    navController: NavController,
+    onLogout: () -> Unit
+    ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
     NavigationBar() {
@@ -58,6 +61,7 @@ fun BottomBar(navController: NavController) {
             selected = false,
             onClick = {
                 // log user out and navigate back to login screen
+                onLogout()
             },
             icon = { Icon(Icons.Default.Logout, null) },
             label = { Text("Logout") }

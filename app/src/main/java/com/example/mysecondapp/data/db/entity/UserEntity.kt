@@ -23,5 +23,8 @@ data class UserEntity(
     val password: String,
 
     @ColumnInfo(name = "account_type")
-    val accountType: String
+    val accountType: String,
+
+    @ColumnInfo(name = "is_admin")
+    val isAdmin: Boolean
 )
