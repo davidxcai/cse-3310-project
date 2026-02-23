@@ -21,7 +21,7 @@ import com.example.mysecondapp.ui.navigation.AppNavGraph
 import com.example.mysecondapp.ui.theme.MysecondappTheme
 
 // David Cai
-
+//Nariman Jahangiri
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
