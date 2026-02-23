@@ -13,7 +13,10 @@ import com.example.mysecondapp.data.dummy.dummyListings
 import com.example.mysecondapp.ui.components.ListingCard
 import androidx.compose.foundation.lazy.items
 
-
+// Sejal
+// TODO:
+// add search functionality
+// filter/sort by name and price
 
 @Composable
 fun HomeScreen(

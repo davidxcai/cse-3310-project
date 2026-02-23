@@ -6,7 +6,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 
-
+// Sejal
 @Composable
 fun SearchBar(
     query: String,
