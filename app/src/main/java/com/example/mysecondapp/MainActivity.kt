@@ -20,6 +20,8 @@ import com.example.mysecondapp.ui.components.TopBar
 import com.example.mysecondapp.ui.navigation.AppNavGraph
 import com.example.mysecondapp.ui.theme.MysecondappTheme
 
+// David Cai
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
