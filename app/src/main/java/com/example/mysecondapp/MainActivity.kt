@@ -22,7 +22,7 @@ import com.example.mysecondapp.ui.theme.MysecondappTheme
 
 // David Cai
 //Sejal Lamsal
-
+//Nariman Jahangiri
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
