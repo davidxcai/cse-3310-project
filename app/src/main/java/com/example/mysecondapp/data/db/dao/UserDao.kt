@@ -8,16 +8,15 @@ import com.example.mysecondapp.data.db.entity.UserEntity
 
 @Dao
 interface UserDao {
-
-    // Register
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(user: UserEntity): Long
 
-    // Validate if user exists
     @Query("SELECT * FROM users WHERE email = :email LIMIT 1")
     suspend fun findByEmail(email: String): UserEntity?
 
-    // Login
+    @Query("SELECT * FROM users WHERE id = :userId LIMIT 1")
+    suspend fun getUserById(userId: Long): UserEntity?
+
     @Query("""
         SELECT * FROM users
         WHERE email = :email AND password = :password
