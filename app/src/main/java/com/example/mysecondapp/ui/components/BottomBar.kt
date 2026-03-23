@@ -18,12 +18,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 @Composable
 fun BottomBar(
     navController: NavController,
+    onCart: () -> Unit,
     onLogout: () -> Unit
     ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
     NavigationBar() {
-
         NavigationBarItem(
             selected = currentRoute == "home/{userId}",
             onClick = {
@@ -50,7 +50,8 @@ fun BottomBar(
 //            label = { Text("Add") }
 //        )
         NavigationBarItem(
-            selected = currentRoute == "cart/{userId}",
+            // Cart icon
+            selected = currentRoute == "cart", // should be cart/{userId}
             onClick = {
                 // navigate to the cart screen
             },

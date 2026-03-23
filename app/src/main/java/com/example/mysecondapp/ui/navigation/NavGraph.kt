@@ -13,6 +13,7 @@ import com.example.mysecondapp.ui.screens.home.HomeScreen
 import com.example.mysecondapp.ui.screens.listing.ListingDetailScreen
 import com.example.mysecondapp.ui.screens.auth.login.LoginScreen
 import com.example.mysecondapp.ui.screens.auth.register.RegisterScreen
+import com.example.mysecondapp.ui.screens.cart.CartScreen
 
 @Composable
 fun AppNavGraph(
@@ -78,6 +79,7 @@ fun AppNavGraph(
         composable("cart") {
             // show buyer's cart
             // can edit items in cart
+            CartScreen()
         }
         composable("checkout") {
             // purchase screen
