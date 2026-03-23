@@ -38,7 +38,8 @@ class RegisterViewModel(app: Application) : AndroidViewModel(app) {
                         email = email.trim(),
                         password = password,
                         accountType = accountType,
-                        isAdmin = isAdmin // Default is false, manually set to true for testing
+                        isAdmin = isAdmin, // Default is false, manually set to true for testing
+                        preferDarkMode = false
                     )
                 )
                 _uiState.value = RegisterUiState(success = true, userId = newId)

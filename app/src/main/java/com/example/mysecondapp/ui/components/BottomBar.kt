@@ -13,34 +13,70 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
 fun BottomBar(
     navController: NavController,
-    onCart: () -> Unit,
+    userId: Long, // Add this!
     onLogout: () -> Unit
-    ) {
+) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
-    NavigationBar() {
+
+    NavigationBar {
+        // --- HOME ---
         NavigationBarItem(
-            selected = currentRoute == "home/{userId}",
+            selected = currentRoute?.startsWith("home") == true,
             onClick = {
-                // shows all listings on screen
-                // do nothing if currently on home
+                navController.navigate("home/$userId") {
+                    // Pop up to the start destination of the graph to
+                    // avoid building up a large stack of destinations
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    // Avoid multiple copies of the same destination when
+                    // reselecting the same item
+                    launchSingleTop = true
+                    // Restore state when reselecting a previously selected item
+                    restoreState = true
+                }
             },
             icon = { Icon(Icons.Default.Home, null) },
             label = { Text("Home") }
         )
+
+        // --- PROFILE ---
         NavigationBarItem(
-            selected = currentRoute == "profile/{userId}",
+            selected = currentRoute?.startsWith("profile") == true,
             onClick = {
-                // navigate to the profile page
+                navController.navigate("profile/$userId")
             },
             icon = { Icon(Icons.Default.Person, null) },
             label = { Text("Profile") }
         )
+
+        // --- CART ---
+        NavigationBarItem(
+            selected = currentRoute?.startsWith("cart") == true,
+            onClick = {
+                navController.navigate("cart/$userId")
+            },
+            icon = { Icon(Icons.Default.ShoppingCart, null) },
+            label = { Text("Cart") }
+        )
+
+        // --- LOGOUT ---
+        NavigationBarItem(
+            selected = false,
+            onClick = { onLogout() },
+            icon = { Icon(Icons.Default.Logout, null) }, // Default name is ExitToApp
+            label = { Text("Logout") }
+        )
+    }
+}
+
 //        NavigationBarItem(
 //            selected = true,
 //            onClick = {
@@ -49,23 +85,3 @@ fun BottomBar(
 //            icon = { Icon(Icons.Default.AddCircle, null) },
 //            label = { Text("Add") }
 //        )
-        NavigationBarItem(
-            // Cart icon
-            selected = currentRoute == "cart", // should be cart/{userId}
-            onClick = {
-                // navigate to the cart screen
-            },
-            icon = { Icon(Icons.Default.ShoppingCart, null) },
-            label = { Text("Cart") }
-        )
-        NavigationBarItem(
-            selected = false,
-            onClick = {
-                // log user out and navigate back to login screen
-                onLogout()
-            },
-            icon = { Icon(Icons.Default.Logout, null) },
-            label = { Text("Logout") }
-        )
-    }
-}

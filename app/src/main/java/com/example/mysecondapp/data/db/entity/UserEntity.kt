@@ -26,5 +26,8 @@ data class UserEntity(
     val accountType: String,
 
     @ColumnInfo(name = "is_admin")
-    val isAdmin: Boolean
+    val isAdmin: Boolean,
+
+    @ColumnInfo(name = "prefer_dark_mode")
+    val preferDarkMode: Boolean,
 )

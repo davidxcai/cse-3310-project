@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "cart",
+    primaryKeys = ["buyer_id", "listing_id"],
     indices = [Index(
         value = ["buyer_id"])
     ],

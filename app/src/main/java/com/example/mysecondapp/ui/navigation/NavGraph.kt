@@ -6,25 +6,29 @@ package com.example.mysecondapp.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.mysecondapp.data.db.MarketplaceRepository
 import com.example.mysecondapp.ui.screens.home.HomeScreen
 import com.example.mysecondapp.ui.screens.listing.ListingDetailScreen
 import com.example.mysecondapp.ui.screens.auth.login.LoginScreen
 import com.example.mysecondapp.ui.screens.auth.register.RegisterScreen
-<<<<<<< HEAD
 import com.example.mysecondapp.ui.screens.cart.CartScreen
-=======
-import com.example.mysecondapp.ui.screens.listing.CartScreen
->>>>>>> 37b4802d54016c2fd744bdc426c5d5eb6bca18fd
+import com.example.mysecondapp.ui.viewmodel.CartViewModel
+import com.example.mysecondapp.ui.viewmodel.ViewModelFactory // Your custom factory
+import com.example.mysecondapp.ui.viewmodel.MarketplaceViewModel
 
 @Composable
 fun AppNavGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    query: String
+    query: String,
+    repository: MarketplaceRepository,
+    onUserAuthenticated: (Long) -> Unit
 ) {
+    val factory = ViewModelFactory(repository)
     NavHost(
         // This is the "root" screen
         // app will always start on this screen
@@ -34,9 +38,9 @@ fun AppNavGraph(
         modifier = modifier
     ) {
         composable("login") {
-            // user authentication
             LoginScreen(
                 onLoginSuccess = { userId ->
+                    onUserAuthenticated(userId) // Tell MainActivity
                     navController.navigate("home/$userId") {
                         popUpTo("login") { inclusive = true }
                     }
@@ -44,26 +48,31 @@ fun AppNavGraph(
                 navController
             )
         }
-        composable("register") {
-            // sign up new users
-            RegisterScreen(
-                onRegisterSuccess = { userId ->
-                    navController.navigate("home/$userId") {
-                        popUpTo("register") { inclusive = true }
-                    }
-                },
-                navController
+        composable("home/{userId}") { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId")!!.toLong()
+
+            val marketplaceViewModel: MarketplaceViewModel = viewModel(factory = factory)
+            val cartViewModel: CartViewModel = viewModel(factory = factory) // Get the cart VM
+
+            HomeScreen(
+                navController = navController,
+                userId = userId,
+                query = query,
+                viewModel = marketplaceViewModel,
+                cartViewModel = cartViewModel // Pass it in
             )
         }
         composable("home/{userId}") { backStackEntry ->
             // This gets the user Id passed in from the database
             val userId = backStackEntry.arguments?.getString("userId")!!.toLong()
+            val marketplaceViewModel: MarketplaceViewModel = viewModel(factory = factory)
             // shows all listings sorted by new
 
             HomeScreen(
                 navController,
                 userId,
-                query
+                query,
+                viewModel = marketplaceViewModel
             )
         }
         composable("listing/{listingId}") { backStackEntry ->
@@ -80,14 +89,17 @@ fun AppNavGraph(
         composable("upload") {
             // upload a new listing
         }
-        composable("cart/{userId}") {
-            backStackEntry ->
-            // This gets the user Id passed in from the database
-            val userId = backStackEntry.arguments?.getString("userId")!!.toLong()
-            CartScreen(navController, userId)
-            // show buyer's cart
-            // can edit items in cart
-            CartScreen()
+        composable("cart/{userId}") { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId")?.toLong() ?: 0L
+
+            // Use the same factory we used for the MarketplaceViewModel
+            val cartViewModel: CartViewModel = viewModel(factory = factory)
+
+            CartScreen(
+                navController = navController,
+                userId = userId,
+                viewModel = cartViewModel
+            )
         }
         composable("checkout") {
             // purchase screen

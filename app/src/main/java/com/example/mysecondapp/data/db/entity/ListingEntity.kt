@@ -34,4 +34,7 @@ data class ListingEntity(
     @ColumnInfo(name = "is_sold")
     val isSold: Boolean = false, // default, item is not yet sold
 
+    @ColumnInfo(name = "is_hidden")
+    val isHidden: Boolean = false, // visible by default unless admin or seller changes
+
 )
