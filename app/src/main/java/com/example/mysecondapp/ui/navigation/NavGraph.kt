@@ -13,7 +13,11 @@ import com.example.mysecondapp.ui.screens.home.HomeScreen
 import com.example.mysecondapp.ui.screens.listing.ListingDetailScreen
 import com.example.mysecondapp.ui.screens.auth.login.LoginScreen
 import com.example.mysecondapp.ui.screens.auth.register.RegisterScreen
+<<<<<<< HEAD
 import com.example.mysecondapp.ui.screens.cart.CartScreen
+=======
+import com.example.mysecondapp.ui.screens.listing.CartScreen
+>>>>>>> 37b4802d54016c2fd744bdc426c5d5eb6bca18fd
 
 @Composable
 fun AppNavGraph(
@@ -69,14 +73,18 @@ fun AppNavGraph(
             val listingId = backStackEntry.arguments?.getString("listingId")!!
             ListingDetailScreen(listingId, navController)
         }
-        composable("myListings") {
+        composable("myListings/{userId}") {
             // shows all listings by user
             // can search and filter
         }
         composable("upload") {
             // upload a new listing
         }
-        composable("cart") {
+        composable("cart/{userId}") {
+            backStackEntry ->
+            // This gets the user Id passed in from the database
+            val userId = backStackEntry.arguments?.getString("userId")!!.toLong()
+            CartScreen(navController, userId)
             // show buyer's cart
             // can edit items in cart
             CartScreen()
@@ -87,10 +95,10 @@ fun AppNavGraph(
         composable("confirmation") {
             // order confirmation screen
         }
-        composable("profile") {
+        composable("profile/{userId}") {
             // contains settings
         }
-        composable("dashboard") {
+        composable("dashboard/{userId}") {
             // for admins to manage
         }
     }
