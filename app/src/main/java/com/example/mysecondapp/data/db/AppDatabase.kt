@@ -20,7 +20,7 @@ import com.example.mysecondapp.data.db.entity.TransactionEntity
         CartEntity::class,
         TransactionEntity::class // Added the new tables
     ],
-    version = 4, // Incremented version
+    version = 5, // Incremented version
     exportSchema = false
 )
 // If you used Date objects in your Entities, add @TypeConverters(Converters::class) here

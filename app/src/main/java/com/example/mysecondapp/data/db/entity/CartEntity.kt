@@ -7,20 +7,13 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "cart",
-    primaryKeys = ["buyer_id", "listing_id"],
-    indices = [Index(
-        value = ["buyer_id"])
-    ],
+    primaryKeys = ["buyer_id", "listing_id"], // This pair IS the unique ID now
+    indices = [Index(value = ["buyer_id"])]
 )
 data class CartEntity(
-    @PrimaryKey(autoGenerate = true)
-
-    @ColumnInfo(name = "cart_id")
-    val id: Long = 0,
-
-    @ColumnInfo(name = "buyer_id") // foreign key
+    @ColumnInfo(name = "buyer_id")
     val buyerId: Long,
 
-    @ColumnInfo(name = "listing_id") // foreign key
-    val listingId: Long,
+    @ColumnInfo(name = "listing_id")
+    val listingId: Long
 )

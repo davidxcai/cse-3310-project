@@ -20,6 +20,13 @@ class CartViewModel(private val repository: MarketplaceRepository) : ViewModel()
         }
     }
 
+    fun removeFromCart(userId: Long, listingId: Long) {
+        viewModelScope.launch {
+            repository.removeFromCart(userId, listingId)
+            // Refresh the local state so the UI knows this item is gone
+            loadCart(userId)
+        }
+    }
     fun checkout(userId: Long, onSuccess: () -> Unit) {
         viewModelScope.launch {
             repository.performCheckout(userId)

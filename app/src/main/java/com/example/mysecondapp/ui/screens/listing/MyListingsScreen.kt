@@ -69,11 +69,15 @@ fun MyListingsScreen(
         // 4. items() now receives a List<ListingEntity>, so no mismatch!
         items(listings) { listing ->
             ListingCard(
-                // mismatch from db
                 listing = listing,
+                sellerName = "You", // Since this is the "My Listings" screen
+                onRemoveFromCart = {}, // Required parameter: leave empty
+                onAddToCart = {},      // Required parameter: leave empty
                 onClick = { navController.navigate("listing/${listing.id}") },
-                onAddToCart = {},
-                onEdit = {}
+                onEdit = {
+                    // This is where the user would edit their own listing
+                    navController.navigate("editListing/${listing.id}")
+                }
             )
         }
     }

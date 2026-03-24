@@ -8,8 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.mysecondapp.data.db.MarketplaceRepository
 import com.example.mysecondapp.ui.screens.home.HomeScreen
 import com.example.mysecondapp.ui.screens.listing.ListingDetailScreen
@@ -66,21 +68,45 @@ fun AppNavGraph(
             // This gets the user Id passed in from the database
             val userId = backStackEntry.arguments?.getString("userId")!!.toLong()
             val marketplaceViewModel: MarketplaceViewModel = viewModel(factory = factory)
+            val cartViewModel: CartViewModel = viewModel(factory = factory)
             // shows all listings sorted by new
 
             HomeScreen(
                 navController,
                 userId,
                 query,
-                viewModel = marketplaceViewModel
+                viewModel = marketplaceViewModel,
+                cartViewModel = cartViewModel
             )
         }
-        composable("listing/{listingId}") { backStackEntry ->
-            // when clicking on a listing
-            // pass the id to the next screen
-            // fetch the data using listing id
-            val listingId = backStackEntry.arguments?.getString("listingId")!!
-            ListingDetailScreen(listingId, navController)
+        composable(
+            route = "listing/{listingId}/{userId}", // Add userId to the route
+            arguments = listOf(
+                navArgument("listingId") { type = NavType.LongType },
+                navArgument("userId") { type = NavType.LongType }
+            )
+        ) { backStackEntry ->
+            // Use the specific NavBundle getters for LongType
+            val lId = backStackEntry.arguments?.getLong("listingId") ?: -1L
+            val uId = backStackEntry.arguments?.getLong("userId") ?: -1L
+
+            ListingDetailScreen(
+                listingId = lId,
+                userId = uId, // Pass the second Long here
+                navController = navController,
+                repository = repository
+            )
+        }
+        composable("listing/{listingId}/{userId}") { backStackEntry ->
+            val lId = backStackEntry.arguments?.getString("listingId")?.toLongOrNull() ?: 0L
+            val uId = backStackEntry.arguments?.getString("userId")?.toLongOrNull() ?: 0L
+
+            ListingDetailScreen(
+                listingId = lId,
+                userId = uId, // Add this parameter
+                navController = navController,
+                repository = repository
+            )
         }
         composable("myListings/{userId}") {
             // shows all listings by user

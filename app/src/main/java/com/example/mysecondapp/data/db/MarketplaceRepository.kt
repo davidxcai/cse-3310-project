@@ -21,6 +21,9 @@ class MarketplaceRepository(private val db: AppDatabase) {
     suspend fun getListingsBySeller(sellerId: Long) = listingDao.getListingsBySeller(sellerId)
 
     // --- Listing Actions ---
+    suspend fun getListingById(id: Long): ListingEntity? {
+        return listingDao.getListingById(id)
+    }
     suspend fun createListing(listing: ListingEntity) = listingDao.addListing(listing)
     suspend fun updateListing(listing: ListingEntity) = listingDao.updateListing(listing)
     suspend fun deleteListing(listing: ListingEntity) = listingDao.deleteListing(listing)
@@ -34,8 +37,8 @@ class MarketplaceRepository(private val db: AppDatabase) {
     suspend fun addItemToCart(buyerId: Long, listingId: Long) {
         cartDao.addToCart(CartEntity(buyerId = buyerId, listingId = listingId))
     }
-    suspend fun removeItemFromCart(cartId: Long) {
-        cartDao.removeFromCart(cartId)
+    suspend fun removeFromCart(userId: Long, listingId: Long) {
+        cartDao.removeFromCart(userId, listingId)
     }
 
     suspend fun getCartWithItems(buyerId: Long) = cartDao.getUserCart(buyerId)

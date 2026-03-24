@@ -50,8 +50,13 @@ fun CartScreen(
         items(cartItems) { listing ->
             ListingCard(
                 listing = listing,
+                isInCart = true, // Force the button to show "Remove"
+                onRemoveFromCart = {
+                    // Call the ViewModel to delete from DB
+                    viewModel.removeFromCart(userId, listing.id)
+                },
                 onClick = { navController.navigate("listing/${listing.id}") },
-                onAddToCart = {}, // Already in cart!
+                onAddToCart = {}, // Not needed here since it's already in the cart
                 onEdit = {}
             )
         }
