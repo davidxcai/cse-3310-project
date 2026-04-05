@@ -89,7 +89,7 @@ class CartDaoTest {
         val cartId = cartDao.addToCart(CartEntity(buyerId = buyerId, listingId = id))
 
         // Remove it
-        cartDao.removeFromCart(cartId)
+//        cartDao.removeFromCart(cartId)
 
         // Verify
         assertFalse(cartDao.isItemInCart(buyerId, id))

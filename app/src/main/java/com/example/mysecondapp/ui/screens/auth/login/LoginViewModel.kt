@@ -14,7 +14,7 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
 
-    fun login(email: String, password: String) {
+    fun login(email: String, password: String, requireAdmin: Boolean = false) {
         viewModelScope.launch {
             _uiState.value = LoginUiState(loading = true)
 
@@ -26,6 +26,8 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
             val user = userDao.login(email.trim(), password)
             if (user == null) {
                 _uiState.value = LoginUiState(error = "Invalid email or password.")
+            } else if (requireAdmin && !user.isAdmin) {
+                _uiState.value = LoginUiState(error = "This account does not have admin privileges.")
             } else {
                 _uiState.value = LoginUiState(successUserId = user.id)
             }

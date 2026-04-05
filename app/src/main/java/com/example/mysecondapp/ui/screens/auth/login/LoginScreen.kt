@@ -5,9 +5,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -15,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,8 +39,10 @@ fun LoginScreen(
     val vm: LoginViewModel = viewModel()
     val state by vm.uiState.collectAsState()
 
-    var email by remember { mutableStateOf("")}
-    var password by remember { mutableStateOf("")}
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    val tabs = listOf("User Login", "Admin Login")
 
     LaunchedEffect(state.successUserId) {
         val id = state.successUserId
@@ -57,38 +63,63 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth(),
                 fontSize = 32.sp
             )
+
+            TabRow(selectedTabIndex = selectedTabIndex) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTabIndex == index,
+                        onClick = { 
+                            selectedTabIndex = index 
+                            vm.clearError()
+                        },
+                        text = { Text(title) }
+                    )
+                }
+            }
+
             TextField(
                 value = email,
-                onValueChange = {email = it},
-                label = { Text("Email")},
+                onValueChange = { email = it },
+                label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth()
             )
             TextField(
                 value = password,
-                onValueChange = {password = it},
+                onValueChange = { password = it },
                 visualTransformation = PasswordVisualTransformation(),
-                label = { Text("Password")},
+                label = { Text("Password") },
                 modifier = Modifier.fillMaxWidth()
             )
-            state.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+            
+            state.error?.let { 
+                Text(
+                    text = it, 
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodySmall
+                ) 
+            }
+
             Button(
                 onClick = {
-                    vm.login(email, password)
+                    vm.login(email, password, requireAdmin = selectedTabIndex == 1)
                 },
                 enabled = !state.loading,
                 modifier = Modifier.fillMaxWidth()
-
             ) {
-                Text(text = "Login")
+                Text(text = if (selectedTabIndex == 1) "Admin Login" else "Login")
             }
-            TextButton(
-                onClick = {
-                    navController.navigate("register")
-                },
-                modifier = Modifier.fillMaxWidth()
 
-            ) {
-                Text(text = "Create new account")
+            if (selectedTabIndex == 0) {
+                TextButton(
+                    onClick = {
+                        navController.navigate("register")
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = "Create new account")
+                }
             }
         }
     }

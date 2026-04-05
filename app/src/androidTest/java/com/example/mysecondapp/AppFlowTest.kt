@@ -52,11 +52,12 @@ class MarketplaceFlowTest {
                 email = "alice@test.com",
                 password = "123",
                 accountType = "SELLER",
-                isAdmin = false
+                isAdmin = false,
+                preferDarkMode = false,
             )
         )
-        val buyerId = userDao.insert(UserEntity(name = "Bob Buyer", email = "bob@test.com", password = "123", accountType = "BUYER", isAdmin = false))
-        val adminId = userDao.insert(UserEntity(name = "Charlie Admin", email = "admin@test.com", password = "123", accountType = "ADMIN", isAdmin = true))
+        val buyerId = userDao.insert(UserEntity(name = "Bob Buyer", email = "bob@test.com", password = "123", accountType = "BUYER", isAdmin = false, preferDarkMode = false))
+        val adminId = userDao.insert(UserEntity(name = "Charlie Admin", email = "admin@test.com", password = "123", accountType = "ADMIN", isAdmin = true, preferDarkMode = false))
 
         // --- PHASE 2: SELLER LISTS 5 ITEMS ---
         val items = listOf(

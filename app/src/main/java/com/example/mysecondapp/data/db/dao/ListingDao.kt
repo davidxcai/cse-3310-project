@@ -5,9 +5,10 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.example.mysecondapp.data.db.entity.ListingEntity
-import com.example.mysecondapp.data.db.entity.UserEntity
+import com.example.mysecondapp.data.db.entity.ListingWithSeller
 
 @Dao
 interface ListingDao {
@@ -20,14 +21,15 @@ interface ListingDao {
     @Update
     suspend fun updateListing(listing: ListingEntity)
 
-    // Get all available/unsold listings
+    // Get all available/unsold listings with seller info
+    @Transaction
     @Query("SELECT * FROM listing WHERE is_sold = 0 AND is_hidden = 0")
-    suspend fun getAllListings(): List<ListingEntity>
+    suspend fun getAllListingsWithSeller(): List<ListingWithSeller>
 
-    // Search Listing
-    // Returns a list of Listings because search usually finds multiple items
+    // Search Listing with seller info
+    @Transaction
     @Query("SELECT * FROM listing WHERE name LIKE '%' || :searchQuery || '%' AND is_sold = 0 AND is_hidden = 0")
-    suspend fun searchListingsByName(searchQuery: String): List<ListingEntity>
+    suspend fun searchListingsByNameWithSeller(searchQuery: String): List<ListingWithSeller>
 
     // Get a specific listing by its ID
     @Query("SELECT * FROM listing WHERE listing_id = :id LIMIT 1")
@@ -38,6 +40,17 @@ interface ListingDao {
     suspend fun deleteListing(listing: ListingEntity)
 
     // Get all listings for a specific seller
+    @Transaction
+    @Query("SELECT * FROM listing WHERE seller_id = :sellerId")
+    suspend fun getListingsBySellerWithSeller(sellerId: Long): List<ListingWithSeller>
+
+    // Keep the original ones for compatibility if needed, but we'll prefer the joined versions
+    @Query("SELECT * FROM listing WHERE is_sold = 0 AND is_hidden = 0")
+    suspend fun getAllListings(): List<ListingEntity>
+
+    @Query("SELECT * FROM listing WHERE name LIKE '%' || :searchQuery || '%' AND is_sold = 0 AND is_hidden = 0")
+    suspend fun searchListingsByName(searchQuery: String): List<ListingEntity>
+
     @Query("SELECT * FROM listing WHERE seller_id = :sellerId")
     suspend fun getListingsBySeller(sellerId: Long): List<ListingEntity>
 }

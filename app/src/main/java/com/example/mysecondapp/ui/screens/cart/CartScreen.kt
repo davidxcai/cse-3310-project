@@ -55,7 +55,7 @@ fun CartScreen(
                     // Call the ViewModel to delete from DB
                     viewModel.removeFromCart(userId, listing.id)
                 },
-                onClick = { navController.navigate("listing/${listing.id}") },
+                onClick = { navController.navigate("listing/${listing.id}/$userId") },
                 onAddToCart = {}, // Not needed here since it's already in the cart
                 onEdit = {}
             )
@@ -65,9 +65,8 @@ fun CartScreen(
             item {
                 Button(
                     onClick = {
-                        viewModel.checkout(userId) {
-                            navController.navigate("home/$userId") // Go home after buying
-                        }
+                        // Navigate to PaymentScreen instead of immediate checkout
+                        navController.navigate("checkout/$userId")
                     },
                     modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
                 ) {

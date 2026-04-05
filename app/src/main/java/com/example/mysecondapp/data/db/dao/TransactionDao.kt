@@ -2,11 +2,9 @@ package com.example.mysecondapp.data.db.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.mysecondapp.data.db.entity.ListingEntity
 import com.example.mysecondapp.data.db.entity.TransactionEntity
-import com.example.mysecondapp.data.db.entity.UserEntity
+import com.example.mysecondapp.data.model.PurchasedListing
 
 @Dao
 interface TransactionDao {
@@ -16,12 +14,19 @@ interface TransactionDao {
     suspend fun insertTransactions(transactions: List<TransactionEntity>)
 
     // Get purchase history for a buyer
-    // This joins with the listing table so you can show the Name and Price in the UI
     @Query("""
-        SELECT listing.*, transactions.purchase_date FROM listing 
+        SELECT 
+            listing.listing_id AS id, 
+            listing.name AS name, 
+            listing.price AS price, 
+            listing.condition AS condition, 
+            users.name AS sellerName, 
+            transactions.purchase_date AS purchaseDate
+        FROM listing 
         INNER JOIN transactions ON listing.listing_id = transactions.listing_id 
+        INNER JOIN users ON listing.seller_id = users.id
         WHERE transactions.buyer_id = :buyerId
         ORDER BY transactions.purchase_date DESC
     """)
-    suspend fun getPurchaseHistory(buyerId: Long): List<ListingEntity>
+    suspend fun getPurchaseHistory(buyerId: Long): List<PurchasedListing>
 }

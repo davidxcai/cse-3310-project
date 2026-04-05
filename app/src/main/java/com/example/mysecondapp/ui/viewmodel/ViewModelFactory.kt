@@ -12,13 +12,17 @@ class ViewModelFactory(private val repository: MarketplaceRepository) : ViewMode
             return MarketplaceViewModel(repository) as T
         }
         if (modelClass.isAssignableFrom(ListingsViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
             return ListingsViewModel(repository) as T
         }
-        // Inside ViewModelFactory.kt
         if (modelClass.isAssignableFrom(CartViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
             return CartViewModel(repository) as T
         }
-        // Add other ViewModels (like ListingsViewModel) here as well
+        if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return ProfileViewModel(repository) as T
+        }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

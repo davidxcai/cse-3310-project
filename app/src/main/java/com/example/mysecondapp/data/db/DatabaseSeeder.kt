@@ -8,7 +8,19 @@ import com.example.mysecondapp.data.db.MarketplaceRepository
 object DatabaseSeeder {
 
     suspend fun seedDatabase(repository: MarketplaceRepository) {
-        // 1. Create a few Users first (necessary for Foreign Keys)
+        // 1. Create an Admin user
+        repository.registerUser(
+            UserEntity(
+                name = "Admin User",
+                email = "admin@example.com",
+                password = "adminpassword",
+                accountType = "ADMIN",
+                isAdmin = true,
+                preferDarkMode = false
+            )
+        )
+
+        // 2. Create a few Users first (necessary for Foreign Keys)
         val names = listOf("Alice", "Bob", "Charlie", "Dylan", "Emma", "Frank", "Grace", "Henry", "Ivy", "Jack", "Karen", "Leo", "Maya")
 
         val userMap = mutableMapOf<String, Long>()
@@ -27,7 +39,7 @@ object DatabaseSeeder {
             userMap[name] = userId
         }
 
-        // 2. Map your Dummy Data to ListingEntities
+        // 3. Map your Dummy Data to ListingEntities
         val dummyListings = listOf(
             Triple("Used MacBook Pro", 900f, "Alice"),
             Triple("Gaming PC", 1200f, "Bob"),

@@ -4,6 +4,7 @@ package com.example.mysecondapp.ui.navigation
 // each "route" will show its own screen
 
 
+import ListingsViewModel
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -18,15 +19,25 @@ import com.example.mysecondapp.ui.screens.listing.ListingDetailScreen
 import com.example.mysecondapp.ui.screens.auth.login.LoginScreen
 import com.example.mysecondapp.ui.screens.auth.register.RegisterScreen
 import com.example.mysecondapp.ui.screens.cart.CartScreen
+import com.example.mysecondapp.ui.screens.cart.ConfirmationScreen
+import com.example.mysecondapp.ui.screens.cart.PaymentScreen
+import com.example.mysecondapp.ui.screens.listing.EditListingScreen
+import com.example.mysecondapp.ui.screens.listing.MyListingsScreen
+import com.example.mysecondapp.ui.screens.listing.UploadConfirmationScreen
+import com.example.mysecondapp.ui.screens.listing.UploadListingScreen
+import com.example.mysecondapp.ui.screens.profile.ProfileScreen
 import com.example.mysecondapp.ui.viewmodel.CartViewModel
 import com.example.mysecondapp.ui.viewmodel.ViewModelFactory // Your custom factory
 import com.example.mysecondapp.ui.viewmodel.MarketplaceViewModel
+import com.example.mysecondapp.ui.viewmodel.ProfileViewModel
+import com.example.mysecondapp.ui.screens.admin.ManageUsersScreen
 
 @Composable
 fun AppNavGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     query: String,
+    onClearQuery: () -> Unit,
     repository: MarketplaceRepository,
     onUserAuthenticated: (Long) -> Unit
 ) {
@@ -60,23 +71,9 @@ fun AppNavGraph(
                 navController = navController,
                 userId = userId,
                 query = query,
+                onClearQuery = onClearQuery,
                 viewModel = marketplaceViewModel,
                 cartViewModel = cartViewModel // Pass it in
-            )
-        }
-        composable("home/{userId}") { backStackEntry ->
-            // This gets the user Id passed in from the database
-            val userId = backStackEntry.arguments?.getString("userId")!!.toLong()
-            val marketplaceViewModel: MarketplaceViewModel = viewModel(factory = factory)
-            val cartViewModel: CartViewModel = viewModel(factory = factory)
-            // shows all listings sorted by new
-
-            HomeScreen(
-                navController,
-                userId,
-                query,
-                viewModel = marketplaceViewModel,
-                cartViewModel = cartViewModel
             )
         }
         composable(
@@ -97,23 +94,40 @@ fun AppNavGraph(
                 repository = repository
             )
         }
-        composable("listing/{listingId}/{userId}") { backStackEntry ->
-            val lId = backStackEntry.arguments?.getString("listingId")?.toLongOrNull() ?: 0L
-            val uId = backStackEntry.arguments?.getString("userId")?.toLongOrNull() ?: 0L
-
-            ListingDetailScreen(
-                listingId = lId,
-                userId = uId, // Add this parameter
+        composable("myListings/{userId}") { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId")?.toLong() ?: 0L
+            val listingsViewModel: ListingsViewModel = viewModel(factory = factory)
+            MyListingsScreen(
+                userId = userId,
+                navController = navController,
+                viewModel = listingsViewModel
+            )
+        }
+        composable("upload/{userId}") { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId")?.toLong() ?: 0L
+            UploadListingScreen(
+                userId = userId,
                 navController = navController,
                 repository = repository
             )
         }
-        composable("myListings/{userId}") {
-            // shows all listings by user
-            // can search and filter
+        composable("uploadConfirmation/{userId}") { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId")?.toLong() ?: 0L
+            UploadConfirmationScreen(
+                userId = userId,
+                navController = navController
+            )
         }
-        composable("upload") {
-            // upload a new listing
+        composable(
+            route = "editListing/{listingId}",
+            arguments = listOf(navArgument("listingId") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val listingId = backStackEntry.arguments?.getLong("listingId") ?: -1L
+            EditListingScreen(
+                listingId = listingId,
+                navController = navController,
+                repository = repository
+            )
         }
         composable("cart/{userId}") { backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId")?.toLong() ?: 0L
@@ -127,14 +141,33 @@ fun AppNavGraph(
                 viewModel = cartViewModel
             )
         }
-        composable("checkout") {
-            // purchase screen
+        composable("checkout/{userId}") { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId")?.toLong() ?: 0L
+            val cartViewModel: CartViewModel = viewModel(factory = factory)
+            PaymentScreen(navController = navController, userId = userId, viewModel = cartViewModel)
         }
-        composable("confirmation") {
-            // order confirmation screen
+        composable("confirmation/{userId}") { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId")?.toLong() ?: 0L
+            ConfirmationScreen(navController = navController, userId = userId)
         }
-        composable("profile/{userId}") {
-            // contains settings
+        composable("profile/{userId}") { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId")?.toLong() ?: 0L
+            val profileViewModel: ProfileViewModel = viewModel(factory = factory)
+            
+            ProfileScreen(
+                navController = navController,
+                userId = userId,
+                viewModel = profileViewModel
+            )
+        }
+        composable("manageUsers/{userId}") { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId")?.toLong() ?: 0L
+            ManageUsersScreen(
+                navController = navController,
+                adminId = userId,
+                query = query,
+                repository = repository
+            )
         }
         composable("dashboard/{userId}") {
             // for admins to manage
