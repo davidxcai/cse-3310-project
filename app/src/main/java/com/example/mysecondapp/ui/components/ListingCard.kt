@@ -51,11 +51,12 @@ fun ListingCard(
                 .weight(1f)
                 .fillMaxHeight()
         ) {
+            val imageData = listing.localImagePath ?: listing.imageUrl
             SubcomposeAsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(listing.imageUrl)
+                    .data(imageData)
                     .crossfade(true)
-                    .memoryCacheKey("${listing.imageUrl}_$retryKey") // Forces a new request on key change
+                    .memoryCacheKey("${imageData}_$retryKey") // Forces a new request on key change
                     .build(),
                 contentDescription = listing.name,
                 modifier = Modifier.fillMaxSize(),
@@ -113,14 +114,14 @@ fun ListingCard(
                 }
             }
 
-            if (isOwner || isAdmin) {
+            if ((isOwner || isAdmin) && !listing.isSold) {
                 Button(
                     onClick = onEdit,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Edit Listing")
                 }
-            } else if (showCartButton && !isCurrentUserSeller) {
+            } else if (showCartButton && !isCurrentUserSeller && !isAdmin) {
                 Button(
                     onClick = { if (isInCart) onRemoveFromCart() else onAddToCart() },
                     modifier = Modifier.fillMaxWidth(),

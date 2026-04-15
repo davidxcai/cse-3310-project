@@ -18,18 +18,16 @@ import com.example.mysecondapp.data.db.entity.TransactionEntity
         UserEntity::class,
         ListingEntity::class,
         CartEntity::class,
-        TransactionEntity::class // Added the new tables
+        TransactionEntity::class
     ],
-    version = 5, // Incremented version
+    version = 6, // Incremented version to support localImagePath in ListingEntity
     exportSchema = false
 )
-// If you used Date objects in your Entities, add @TypeConverters(Converters::class) here
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
     abstract fun listingDao(): ListingDao
     abstract fun cartDao(): CartDao
-
     abstract fun transactionDao(): TransactionDao
 
     companion object {

@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.example.mysecondapp.data.db.entity.CartEntity
 import com.example.mysecondapp.data.db.entity.ListingEntity
+import com.example.mysecondapp.data.db.entity.ListingWithSeller
 import com.example.mysecondapp.data.db.entity.TransactionEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -35,6 +36,14 @@ interface CartDao {
         WHERE cart.buyer_id = :buyerId
     """)
     fun observeUserCart(buyerId: Long): Flow<List<ListingEntity>>
+
+    @Transaction
+    @Query("""
+        SELECT listing.* FROM listing 
+        INNER JOIN cart ON listing.listing_id = cart.listing_id 
+        WHERE cart.buyer_id = :buyerId
+    """)
+    fun observeUserCartWithSeller(buyerId: Long): Flow<List<ListingWithSeller>>
 
     @Insert
     suspend fun insertTransactions(transactions: List<TransactionEntity>)

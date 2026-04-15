@@ -87,11 +87,14 @@ fun AppNavGraph(
             val lId = backStackEntry.arguments?.getLong("listingId") ?: -1L
             val uId = backStackEntry.arguments?.getLong("userId") ?: -1L
 
+            val cartViewModel: CartViewModel = viewModel(factory = factory)
+
             ListingDetailScreen(
                 listingId = lId,
                 userId = uId, // Pass the second Long here
                 navController = navController,
-                repository = repository
+                repository = repository,
+                cartViewModel = cartViewModel
             )
         }
         composable("myListings/{userId}") { backStackEntry ->

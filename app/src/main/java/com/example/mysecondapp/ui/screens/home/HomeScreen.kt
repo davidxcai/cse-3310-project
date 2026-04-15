@@ -56,6 +56,7 @@ fun HomeScreen(
 
     LaunchedEffect(userId) {
         viewModel.loadUser(userId)
+        cartViewModel.loadCart(userId)
     }
 
     LaunchedEffect(query) {
@@ -158,7 +159,7 @@ fun HomeScreen(
                 items(listings) { listingWithSeller ->
                     val listing = listingWithSeller.listing
                     val seller = listingWithSeller.seller
-                    val alreadyInCart = cartItems.any { it.id == listing.id }
+                    val alreadyInCart = cartItems.any { it.listing.id == listing.id }
 
                     ListingCard(
                         listing = listing,
@@ -170,8 +171,12 @@ fun HomeScreen(
                         onClick = {
                             navController.navigate("listing/${listing.id}/$userId")
                         },
-                        onAddToCart = { viewModel.addToCart(userId, listing.id) },
-                        onRemoveFromCart = { cartViewModel.removeFromCart(userId, listing.id) },
+                        onAddToCart = { 
+                            viewModel.addToCart(userId, listing.id)
+                        },
+                        onRemoveFromCart = { 
+                            cartViewModel.removeFromCart(userId, listing.id) 
+                        },
                         onEdit = {
                             navController.navigate("editListing/${listing.id}")
                         }

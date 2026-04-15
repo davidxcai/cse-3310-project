@@ -47,9 +47,12 @@ fun CartScreen(
             }
         }
 
-        items(cartItems) { listing ->
+        items(cartItems) { itemWithSeller ->
+            val listing = itemWithSeller.listing
+            val seller = itemWithSeller.seller
             ListingCard(
                 listing = listing,
+                sellerName = seller.name,
                 isInCart = true, // Force the button to show "Remove"
                 onRemoveFromCart = {
                     // Call the ViewModel to delete from DB
@@ -70,7 +73,7 @@ fun CartScreen(
                     },
                     modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
                 ) {
-                    val total = cartItems.sumOf { it.price.toDouble() }
+                    val total = cartItems.sumOf { it.listing.price.toDouble() }
                     Text("Checkout ($${String.format(java.util.Locale.getDefault(), "%.2f", total)})")
                 }
             }

@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import java.sql.Date
 
 @Entity(
     tableName = "listing",
@@ -14,7 +13,6 @@ import java.sql.Date
 )
 data class ListingEntity(
     @PrimaryKey(autoGenerate = true)
-
     @ColumnInfo(name = "listing_id")
     val id: Long = 0,
 
@@ -28,7 +26,11 @@ data class ListingEntity(
     val dateAdded: Long, // is long for simplicity
 
     @ColumnInfo(name = "image_url")
-    val imageUrl: String,
+    val imageUrl: String? = null,
+
+    @ColumnInfo(name = "local_image_path")
+    val localImagePath: String? = null,
+
     val condition: String,
 
     @ColumnInfo(name = "is_sold")
@@ -36,5 +38,4 @@ data class ListingEntity(
 
     @ColumnInfo(name = "is_hidden")
     val isHidden: Boolean = false, // visible by default unless admin or seller changes
-
 )

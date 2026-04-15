@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +41,7 @@ import com.example.mysecondapp.data.db.MarketplaceRepository
 import com.example.mysecondapp.data.db.entity.ListingEntity
 import com.example.mysecondapp.data.db.entity.UserEntity
 import com.example.mysecondapp.ui.components.SkeletonLoader
+import com.example.mysecondapp.ui.viewmodel.CartViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -50,12 +52,16 @@ fun ListingDetailScreen(
     listingId: Long,
     userId: Long,
     navController: NavController,
-    repository: MarketplaceRepository
+    repository: MarketplaceRepository,
+    cartViewModel: CartViewModel
 ) {
     var listing by remember { mutableStateOf<ListingEntity?>(null) }
     var user by remember { mutableStateOf<UserEntity?>(null) }
     var retryKey by remember { mutableIntStateOf(0) }
     val scope = rememberCoroutineScope()
+
+    val cartItems by cartViewModel.cartItems.collectAsState()
+    val isInCart = cartItems.any { it.listing.id == listingId }
 
     LaunchedEffect(listingId) {
         listing = repository.getListingById(listingId)
@@ -63,6 +69,7 @@ fun ListingDetailScreen(
 
     LaunchedEffect(userId) {
         user = repository.getUser(userId)
+        cartViewModel.loadCart(userId)
     }
 
     if (listing == null || user == null) {
@@ -72,6 +79,7 @@ fun ListingDetailScreen(
     } else {
         val item = listing!!
         val currentUser = user!!
+        val isAdmin = currentUser.isAdmin
         val isSeller = currentUser.accountType.uppercase() == "SELLER"
         val isOwner = item.sellerId == currentUser.id
         
@@ -90,11 +98,12 @@ fun ListingDetailScreen(
         ) {
             Text(text = item.name, style = MaterialTheme.typography.headlineMedium)
 
+            val imageData = item.localImagePath ?: item.imageUrl
             SubcomposeAsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(item.imageUrl)
+                    .data(imageData)
                     .crossfade(true)
-                    .memoryCacheKey("${item.imageUrl}_$retryKey")
+                    .memoryCacheKey("${imageData}_$retryKey")
                     .build(),
                 contentDescription = item.name,
                 modifier = Modifier
@@ -126,7 +135,7 @@ fun ListingDetailScreen(
             Text(text = "Condition: ${item.condition}")
             Text(text = "Posted on: $formattedDate")
 
-            if (isOwner) {
+            if ((isOwner || isAdmin) && !item.isSold) {
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
@@ -135,18 +144,30 @@ fun ListingDetailScreen(
                 ) {
                     Text("Edit Listing")
                 }
-            } else if (!isSeller) {
+            } else if (!isSeller && !isAdmin) {
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !item.isSold,
                     onClick = {
                         scope.launch {
-                            repository.addItemToCart(userId, item.id)
-                            navController.navigate("cart/$userId")
+                            if (isInCart) {
+                                cartViewModel.removeFromCart(userId, item.id)
+                            } else {
+                                repository.addItemToCart(userId, item.id)
+                                cartViewModel.loadCart(userId)
+                            }
                         }
-                    }
+                    },
+                    colors = if (isInCart) androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                    else androidx.compose.material3.ButtonDefaults.buttonColors()
                 ) {
-                    Text(if (item.isSold) "Sold Out" else "Add to Cart")
+                    Text(
+                        text = when {
+                            item.isSold -> "Sold Out"
+                            isInCart -> "Remove from Cart"
+                            else -> "Add to Cart"
+                        }
+                    )
                 }
             }
         }

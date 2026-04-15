@@ -71,7 +71,7 @@ fun BuyerHomeScreen(
             items(listings) { listingWithSeller ->
                 val listing = listingWithSeller.listing
                 val seller = listingWithSeller.seller
-                val alreadyInCart = cartItems.any { it.id == listing.id }
+                val alreadyInCart = cartItems.any { it.listing.id == listing.id }
 
                 ListingCard(
                     listing = listing,

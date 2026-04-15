@@ -58,6 +58,7 @@ class MarketplaceRepository(private val db: AppDatabase) {
     
     // Reactive flow for cart items
     fun observeCart(buyerId: Long): Flow<List<ListingEntity>> = cartDao.observeUserCart(buyerId)
+    fun observeCartWithSeller(buyerId: Long): Flow<List<ListingWithSeller>> = cartDao.observeUserCartWithSeller(buyerId)
 
     // The "Big Red Button"
     suspend fun performCheckout(buyerId: Long) = cartDao.checkout(buyerId)

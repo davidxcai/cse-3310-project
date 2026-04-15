@@ -37,7 +37,7 @@ fun EditListingScreen(
             listing = it
             name = it.name
             price = it.price.toString()
-            imageUrl = it.imageUrl
+            imageUrl = it.imageUrl ?: ""
             condition = it.condition
             isSold = it.isSold
             isHidden = it.isHidden
