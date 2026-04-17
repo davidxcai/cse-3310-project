@@ -52,7 +52,7 @@ fun CartScreen(
             val seller = itemWithSeller.seller
             ListingCard(
                 listing = listing,
-                sellerName = seller.name,
+                sellerName = seller?.name ?: "Unknown Seller",
                 isInCart = true, // Force the button to show "Remove"
                 onRemoveFromCart = {
                     // Call the ViewModel to delete from DB

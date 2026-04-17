@@ -9,5 +9,5 @@ data class ListingWithSeller(
         parentColumn = "seller_id",
         entityColumn = "id"
     )
-    val seller: UserEntity
+    val seller: UserEntity?
 )

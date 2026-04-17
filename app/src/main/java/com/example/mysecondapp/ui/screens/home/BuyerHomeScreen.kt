@@ -75,7 +75,7 @@ fun BuyerHomeScreen(
 
                 ListingCard(
                     listing = listing,
-                    sellerName = seller.name,
+                    sellerName = seller?.name ?: "Unknown Seller",
                     isInCart = alreadyInCart,
                     onClick = {
                         navController.navigate("listing/${listing.id}/$userId")

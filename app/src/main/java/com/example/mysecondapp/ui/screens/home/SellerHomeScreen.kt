@@ -66,7 +66,7 @@ fun SellerHomeScreen(
 
                 ListingCard(
                     listing = listing,
-                    sellerName = seller.name,
+                    sellerName = seller?.name ?: "Unknown Seller",
                     isInCart = false, // Sellers don't see cart status for their own items here
                     onClick = {
                         navController.navigate("listing/${listing.id}/$userId")

@@ -158,7 +158,7 @@ fun HomeScreen(
 
                 items(listings) { listingWithSeller ->
                     val listing = listingWithSeller.listing
-                    val seller = listingWithSeller.seller
+                    val seller = listingWithSeller.seller ?: return@items
                     val alreadyInCart = cartItems.any { it.listing.id == listing.id }
 
                     ListingCard(
