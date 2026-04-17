@@ -61,6 +61,19 @@ fun AppNavGraph(
                 navController
             )
         }
+        composable("register") {
+            RegisterScreen(
+                onRegisterSuccess = { userId ->
+                    if (userId != null) {
+                        onUserAuthenticated(userId)
+                        navController.navigate("home/$userId") {
+                            popUpTo("login") { inclusive = true }
+                        }
+                    }
+                },
+                navController = navController
+            )
+        }
         composable("home/{userId}") { backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId")!!.toLong()
 

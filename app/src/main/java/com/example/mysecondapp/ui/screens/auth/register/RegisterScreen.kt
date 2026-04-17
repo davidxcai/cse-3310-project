@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -56,7 +58,7 @@ fun RegisterScreen(
             modifier = Modifier.width(280.dp)
         ) {
             Text(
-                text = "Marketplace App",
+                text = "ThriftTech",
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
                 fontSize = 32.sp
@@ -80,9 +82,18 @@ fun RegisterScreen(
                 label = { Text("Password")},
                 modifier = Modifier.fillMaxWidth()
             )
-            Row {
-                Button(onClick = { accountType = "BUYER" }) { Text("Buyer") }
-                Button(onClick = { accountType = "SELLER" }) { Text("Seller") }
+            val accountTabs = listOf("Buyer", "Seller")
+            TabRow(
+                selectedTabIndex = if (accountType == "BUYER") 0 else 1,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                accountTabs.forEach { title ->
+                    Tab(
+                        selected = accountType == title.uppercase(),
+                        onClick = { accountType = title.uppercase() },
+                        text = { Text(title) }
+                    )
+                }
             }
 
             state.error?.let { Text(it) }
